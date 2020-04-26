@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from flask import Flask, request
 from minio import Minio
-from minio.error import ResponseError
 
 import config as cfg
 
@@ -42,13 +41,9 @@ def hello_world():
 def download(bucket, file):
     if not (bucket_exists(bucket) and file_exists(bucket, file)):
         return return_code(404)
-    try:
-        return client.presigned_get_object(bucket_name=bucket,
-                                           object_name=file,
-                                           expires=timedelta(minutes=15))
-    except ResponseError as err:
-        print(err)
-        return return_code(500)
+    return client.presigned_get_object(bucket_name=bucket,
+                                       object_name=file,
+                                       expires=timedelta(minutes=15))
 
 
 @app.route('/upload', methods=['POST'])
@@ -58,13 +53,9 @@ def upload():
     file = content['file']
     if not bucket_exists(bucket):
         return return_code(404)
-    try:
-        return client.presigned_put_object(bucket_name=bucket,
-                                           object_name=file,
-                                           expires=timedelta(minutes=15))
-    except ResponseError as err:
-        print(err)
-        return return_code(500)
+    return client.presigned_put_object(bucket_name=bucket,
+                                       object_name=file,
+                                       expires=timedelta(minutes=15))
 
 
 if __name__ == '__main__':
