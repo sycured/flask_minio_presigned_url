@@ -14,18 +14,12 @@ client = Minio(endpoint=cfg.endpoint, access_key=cfg.access_key,
 
 
 def bucket_exists(name):
-    if name in [i.name for i in client.list_buckets()]:
-        return True
-    else:
-        return False
+    return name in [i.name for i in client.list_buckets()]
 
 
 def file_exists(bucket, name):
-    if name in [i.object_name for i in
-                client.list_objects(bucket_name=bucket, prefix=name[:5])]:
-        return True
-    else:
-        return False
+    return name in [i.object_name for i in
+                client.list_objects(bucket_name=bucket, prefix=name[:5])]
 
 
 def return_code(http_code: int):
