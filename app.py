@@ -19,7 +19,7 @@ def bucket_exists(name):
 
 def file_exists(bucket, name):
     return name in [i.object_name for i in
-                client.list_objects(bucket_name=bucket, prefix=name[:5])]
+                    client.list_objects(bucket_name=bucket, prefix=name[:5])]
 
 
 def return_code(http_code: int):
