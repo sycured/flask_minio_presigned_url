@@ -1,28 +1,29 @@
 from datetime import timedelta
 
-from flask import Flask, request
-from minio import Minio
-
 import config as cfg
+
+from flask import Flask, Response, request
+
+from minio import Minio
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SECRET_KEY'] = cfg.flask_secret_key
 
-client = Minio(endpoint=cfg.endpoint, access_key=cfg.access_key,
-               secret_key=cfg.secret_key, secure=cfg.ssl)
+client: Minio = Minio(endpoint=cfg.endpoint, access_key=cfg.access_key,
+                      secret_key=cfg.secret_key, secure=cfg.ssl)
 
 
-def bucket_exists(name):
-    return name in [i.name for i in client.list_buckets()]
+def bucket_exists(name: str) -> bool:
+    return name in (i.name for i in client.list_buckets())
 
 
-def file_exists(bucket, name):
-    return name in [i.object_name for i in
-                    client.list_objects(bucket_name=bucket, prefix=name[:5])]
+def file_exists(bucket: str, name: str) -> bool:
+    return name in (i.object_name for i in
+                    client.list_objects(bucket_name=bucket, prefix=name[:5]))
 
 
-def return_code(http_code: int):
+def return_code(http_code: int) -> Response:
     return app.response_class(status=http_code)
 
 
